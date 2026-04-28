@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HolaTeams — Demo Review</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #F5F7FA; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+  .card { background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; padding: 2rem 2.25rem; max-width: 500px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+  .logo-circle { width: 42px; height: 42px; border-radius: 50%; background: #fff; border: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; color: #0078D4; flex-shrink: 0; }
+  .brand { font-size: 15px; font-weight: 600; color: #111827; }
+  .brand-sub { font-size: 12px; color: #6B7280; margin-top: 1px; }
+  h2 { font-size: 22px; font-weight: 600; color: #111827; margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: #6B7280; margin-bottom: 1.25rem; }
+  hr { border: none; border-top: 1px solid #F3F4F6; margin: 1.25rem 0; }
+  .detail-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+  .detail-label { font-size: 12px; color: #9CA3AF; min-width: 44px; padding-top: 2px; }
+  .detail-val { font-size: 14px; color: #111827; font-weight: 500; }
+  .section-label { font-size: 14px; font-weight: 600; color: #111827; margin: 1.25rem 0 10px; }
+  .required { color: #EF4444; margin-left: 2px; }
+  .stars { display: flex; gap: 8px; margin-bottom: 6px; }
+  .star { font-size: 32px; cursor: pointer; color: #E5E7EB; transition: color 0.12s; user-select: none; line-height: 1; }
+  .star.active, .star.hovered { color: #F59E0B; }
+  .rating-labels { display: flex; justify-content: space-between; font-size: 11px; color: #9CA3AF; margin-bottom: 4px; }
+  .hint { font-size: 12px; color: #9CA3AF; min-height: 18px; margin-top: 2px; }
+  textarea { width: 100%; min-height: 100px; font-size: 14px; padding: 12px 14px; border: 1px solid #E5E7EB; border-radius: 10px; background: #F9FAFB; color: #111827; resize: vertical; font-family: inherit; outline: none; transition: border-color 0.15s; }
+  textarea:focus { border-color: #0078D4; background: #fff; }
+  textarea::placeholder { color: #9CA3AF; }
+  .submit-btn { width: 100%; padding: 13px; background: #0078D4; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 1.25rem; transition: background 0.15s, opacity 0.15s; }
+  .submit-btn:hover:not(:disabled) { background: #006ABD; }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .success { display: none; text-align: center; padding: 2rem 0; }
+  .success-check { width: 56px; height: 56px; border-radius: 50%; background: #ECFDF5; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 26px; color: #10B981; }
+  .success-title { font-size: 20px; font-weight: 600; color: #111827; margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: #6B7280; }
+  .footer { text-align: center; font-size: 12px; color: #9CA3AF; margin-top: 1.5rem; }
+  .footer a { color: #9CA3AF; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo-row">
+    <img src="data:image/png;base64,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" alt="HolaTeams" style="height:40px;object-fit:contain;">
+    <div class="brand-sub" style="margin-left:4px;align-self:flex-end;padding-bottom:2px;">powered by Microsoft Bookings</div>
+  </div>
+
+  <div id="form-view">
+    <h2>How was your experience?</h2>
+    <p class="subtitle">Leave HolaTeams a review — it only takes a minute.</p>
+
+    <hr>
+
+    <div class="detail-row">
+      <span class="detail-label">📅 What</span>
+      <span class="detail-val">45 Min HolaTeams.com Platform Demo</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">🕐 When</span>
+      <span class="detail-val">Monday, April 27, 2026 · 1:00 PM</span>
+    </div>
+
+    <hr>
+
+    <div class="section-label">Rating<span class="required">*</span></div>
+    <div class="stars" id="stars">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <div class="rating-labels"><span>Poor</span><span>Excellent</span></div>
+    <div class="hint" id="hint">Click to rate</div>
+
+    <div class="section-label" style="margin-top:1.5rem">
+      Write a review <span style="font-weight:400;color:#9CA3AF">(optional)</span>
+    </div>
+    <textarea id="review" placeholder="Share your thoughts about the demo session..."></textarea>
+
+    <button class="submit-btn" id="submit-btn" disabled>Submit review</button>
+  </div>
+
+  <div class="success" id="success-view">
+    <div class="success-check">✓</div>
+    <div class="success-title">Thank you for your feedback!</div>
+    <p class="success-sub">Your review helps HolaTeams improve and serve you better.</p>
+  </div>
+
+  <div class="footer">HolaTeams · <a href="#">Unsubscribe</a></div>
+</div>
+
+<script>
+  const labels = ['','Poor','Fair','Good','Very good','Excellent'];
+  let selected = 0;
+  const stars = document.querySelectorAll('.star');
+  const hint = document.getElementById('hint');
+  const btn = document.getElementById('submit-btn');
+
+  function paint(n, cls) {
+    stars.forEach((s, i) => {
+      s.classList.remove('active','hovered');
+      if (i < n) s.classList.add(cls);
+    });
+  }
+
+  stars.forEach(s => {
+    s.addEventListener('mouseenter', () => { if (!selected) paint(+s.dataset.val, 'hovered'); });
+    s.addEventListener('mouseleave', () => { if (!selected) paint(0, 'hovered'); });
+    s.addEventListener('click', () => {
+      selected = +s.dataset.val;
+      paint(selected, 'active');
+      hint.textContent = labels[selected];
+      btn.disabled = false;
+    });
+  });
+
+  btn.addEventListener('click', () => {
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+  });
+</script>
+</body>
+</html>
