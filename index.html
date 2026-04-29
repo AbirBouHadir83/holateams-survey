@@ -24,6 +24,8 @@
   .star { font-size: 32px; cursor: pointer; color: #E5E7EB; transition: color 0.12s; user-select: none; line-height: 1; }
   .star.active, .star.hovered { color: #F59E0B; }
   .rating-labels { display: flex; justify-content: space-between; font-size: 11px; color: #9CA3AF; margin-bottom: 4px; }
+  .rating-item { margin-bottom: 16px; padding: 12px 14px; background: #F9FAFB; border-radius: 10px; border: 1px solid #F3F4F6; }
+  .rating-label-row { font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
   .hint { font-size: 12px; color: #9CA3AF; min-height: 18px; margin-top: 2px; }
   textarea { width: 100%; min-height: 100px; font-size: 14px; padding: 12px 14px; border: 1px solid #E5E7EB; border-radius: 10px; background: #F9FAFB; color: #111827; resize: vertical; font-family: inherit; outline: none; transition: border-color 0.15s; }
   textarea:focus { border-color: #0078D4; background: #fff; }
@@ -63,16 +65,37 @@
 
     <hr>
 
-    <div class="section-label">Rating<span class="required">*</span></div>
-    <div class="stars" id="stars">
-      <span class="star" data-val="1">★</span>
-      <span class="star" data-val="2">★</span>
-      <span class="star" data-val="3">★</span>
-      <span class="star" data-val="4">★</span>
-      <span class="star" data-val="5">★</span>
+    <div class="section-label">Ratings<span class="required">*</span></div>
+
+    <div class="rating-item">
+      <div class="rating-label-row">🎯 <span>Demo Quality</span></div>
+      <div class="stars" id="stars-1" data-group="1">
+        <span class="star" data-val="1">★</span><span class="star" data-val="2">★</span>
+        <span class="star" data-val="3">★</span><span class="star" data-val="4">★</span>
+        <span class="star" data-val="5">★</span>
+      </div>
+      <div class="hint" id="hint-1">Click to rate</div>
     </div>
-    <div class="rating-labels"><span>Poor</span><span>Excellent</span></div>
-    <div class="hint" id="hint">Click to rate</div>
+
+    <div class="rating-item">
+      <div class="rating-label-row">💡 <span>Product Value</span></div>
+      <div class="stars" id="stars-2" data-group="2">
+        <span class="star" data-val="1">★</span><span class="star" data-val="2">★</span>
+        <span class="star" data-val="3">★</span><span class="star" data-val="4">★</span>
+        <span class="star" data-val="5">★</span>
+      </div>
+      <div class="hint" id="hint-2">Click to rate</div>
+    </div>
+
+    <div class="rating-item">
+      <div class="rating-label-row">🤝 <span>Host Experience</span></div>
+      <div class="stars" id="stars-3" data-group="3">
+        <span class="star" data-val="1">★</span><span class="star" data-val="2">★</span>
+        <span class="star" data-val="3">★</span><span class="star" data-val="4">★</span>
+        <span class="star" data-val="5">★</span>
+      </div>
+      <div class="hint" id="hint-3">Click to rate</div>
+    </div>
 
     <div class="section-label" style="margin-top:1.5rem">
       Write a review <span style="font-weight:400;color:#9CA3AF">(optional)</span>
@@ -93,26 +116,33 @@
 
 <script>
   const labels = ['','Poor','Fair','Good','Very good','Excellent'];
-  let selected = 0;
-  const stars = document.querySelectorAll('.star');
-  const hint = document.getElementById('hint');
+  const selected = {1: 0, 2: 0, 3: 0};
   const btn = document.getElementById('submit-btn');
 
-  function paint(n, cls) {
+  function paintGroup(groupId, n, cls) {
+    const stars = document.querySelectorAll('#stars-' + groupId + ' .star');
     stars.forEach((s, i) => {
       s.classList.remove('active','hovered');
       if (i < n) s.classList.add(cls);
     });
   }
 
-  stars.forEach(s => {
-    s.addEventListener('mouseenter', () => { if (!selected) paint(+s.dataset.val, 'hovered'); });
-    s.addEventListener('mouseleave', () => { if (!selected) paint(0, 'hovered'); });
-    s.addEventListener('click', () => {
-      selected = +s.dataset.val;
-      paint(selected, 'active');
-      hint.textContent = labels[selected];
-      btn.disabled = false;
+  function checkAllRated() {
+    btn.disabled = !(selected[1] && selected[2] && selected[3]);
+  }
+
+  [1, 2, 3].forEach(groupId => {
+    const groupStars = document.querySelectorAll('#stars-' + groupId + ' .star');
+    const hint = document.getElementById('hint-' + groupId);
+    groupStars.forEach(s => {
+      s.addEventListener('mouseenter', () => { if (!selected[groupId]) paintGroup(groupId, +s.dataset.val, 'hovered'); });
+      s.addEventListener('mouseleave', () => { if (!selected[groupId]) paintGroup(groupId, 0, 'hovered'); });
+      s.addEventListener('click', () => {
+        selected[groupId] = +s.dataset.val;
+        paintGroup(groupId, selected[groupId], 'active');
+        hint.textContent = labels[selected[groupId]];
+        checkAllRated();
+      });
     });
   });
 
